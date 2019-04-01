@@ -1,0 +1,222 @@
+.factcheck__overlay {
+    position: absolute;
+    width: 20%;
+    height: 90%;
+    z-index: 100;
+    pointer-events: none;
+    overflow: auto;
+    right: 2rem;
+}
+
+.factcheck__overlay-check {
+    color: white;
+    opacity: 0.95;
+    background-color:#2C2C2C;
+    /* width: 100%; */
+    /* height: 30%; */
+
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+
+    padding: 1.5rem;
+    margin-top: 10px;
+
+    pointer-events: all;
+    transform: scale(1);
+  }
+
+.fadeIn {
+  animation: cardIn 1.0s;
+}
+
+.fadeOut {
+  animation: cardIn 1.0s;
+  animation-direction: alternate;
+}
+
+::-webkit-scrollbar { 
+    display: none; 
+}
+
+.conclusion{
+    margin-top: 5px;
+    float: right;
+}
+
+.quote{
+    margin-left: 1rem;
+    margin-top: 5px;
+    color: #C2C2C2;
+}
+
+.title {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    margin-bottom: 0;
+}
+
+.collapsible {
+  margin-top: 1rem;
+  background-color: #555;
+  color: white;
+  cursor: pointer;
+  padding: 5px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 11px;
+}
+  
+.active, .collapsible:hover {
+  background-color: #555;
+}
+
+.content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #555;
+}
+
+@keyframes cardIn {
+    from{
+      opacity: 0.0;
+    }
+    to{
+      opacity: 1.0;
+    }
+}
+
+.bar {
+  width: auto;
+  background-color: #555;
+
+  margin-top: -1.5rem;
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+  margin-bottom: 2rem;
+}
+
+.progress {
+  width: 1%;
+  height: 3px;
+  background-color: white;
+
+  
+}
+
+.placeholder {
+  height: 100%;
+
+}
+
+
+
+.hidden {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 2s, opacity 2s linear;
+}
+
+.openHistory {
+  border-radius: 50%;
+  background-color:#2C2C2C;
+
+  height: 4rem;
+  width: 4rem;
+  
+  border: none;
+  color: white;
+
+  
+  font-size: 1.5em;
+  line-height: 1.5em;
+
+  
+  text-align: right;
+
+  outline: none;
+
+
+  transition: all .2s ease-in-out;
+}
+
+.openHistory:hover {
+  background-color: white;
+  color: black;
+}
+
+.closeHistory {
+  border: none;
+  outline: none;
+  background-color: gray;
+  color: white;
+  border-radius: 10px;
+  height: 80%;
+}
+
+.historyHeader {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  margin: 1rem;
+}
+
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+
+  position: absolute;
+  top: 50%;
+  z-index: 99;
+  transform: translate(-50%, -50%);
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 100px;
+  background-color: white;
+  color: black;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 110%; 
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.sidebar {
+  height: 90%;
+  width: 0;
+  position: relative;
+  z-index: 99;
+  top: 0;
+  left: 0;
+  background-color: #2C2C2C;
+  color: white;
+  opacity: 0.95;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  transition: 0.5s;
+  /* padding-top: 60px; */
+}
+
+.historyContainer {
+  margin: 1rem;
+  overflow-y: scroll;
+  max-height:100%;
+}
