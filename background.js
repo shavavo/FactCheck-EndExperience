@@ -9,7 +9,9 @@ var example = {
     }
 }
 
-function process_results(data, callback) {
+var url = "http://techcheck-central.icheckuclaim.org"
+
+function process_results(data, last_update, callback) {
     // Get most recent run
     max_date_index = 0;
     max_date = null;
@@ -25,7 +27,13 @@ function process_results(data, callback) {
 
     // Make request with most recent SID
     var r = new XMLHttpRequest();
-    r.open('GET', `http://techcheck-central.icheckuclaim.org/api/matches/show?sid=${sid}&details=1`);
+
+    var matchesURL = `${url}/api/matches/show?sid=${sid}&details=1`;
+
+    if(last_update)
+        matchesURL += `&when_created_after=${last_update}`
+
+    r.open('GET', matchesURL);
     r.onload = function() {
         // Begin accessing JSON data here
         var data = JSON.parse(this.response);
@@ -34,24 +42,31 @@ function process_results(data, callback) {
         cards = {};
         pos.forEach(element => {
             // console.log(element);
-            temp = {};
+            key = element['text_details']['tid'];
+
+            if (key in cards)
+                temp = cards[key];
+            else {
+                temp = {}
+                temp['explaination'] = [];
+                temp['source'] = [];
+                temp['conclusion'] = [];
+            }
+                
+
             temp['active'] = false;
             
-            temp['explaination'] = element['factcheck_details']['article_url'];
-            temp['source'] = element['factcheck_details']['organization_name'];
-            temp['conclusion'] = element['factcheck_details']['rating'];
+            temp['explaination'].push(element['factcheck_details']['article_url']) ;
+            temp['source'].push(element['factcheck_details']['organization_name']);
+            temp['conclusion'].push(element['factcheck_details']['rating']);
+
             temp['quote'] = element['text_details']['text'];
             temp['time'] = element['text_details']['begins'];
-           
 
-            console.log(temp['time']);
-
-            cards[element['fid']] = temp;
+            cards[key] = temp;
         })
 
-        // console.log(cards);
-
-        callback(cards);
+        callback({"cards": cards, "timestamp": data["current_timestamp"]});
     }
     r.send();
 }
@@ -61,13 +76,11 @@ chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (request.greeting) {
             var r = new XMLHttpRequest()
-            r.open('GET', `http://techcheck-central.icheckuclaim.org/api/streams/find?youtube_id=${request.greeting}`, true)
+            r.open('GET', `${url}/api/streams/find?youtube_id=${request.greeting["id"]}`, true)
             
             r.onload = function() {
                 // Begin accessing JSON data here
                 var data = JSON.parse(this.response)
-                
-                // console.log(data);
 
                 // YouTube ID not found
                 if(data.length==0) {
@@ -76,7 +89,7 @@ chrome.runtime.onMessage.addListener(
                 }
                 
                 // YouTube ID found
-                process_results(data, function(fact_checks) {
+                process_results(data, request.greeting["last_update"], function(fact_checks) {
                     sendResponse({data: fact_checks});
                     return;
                 });
