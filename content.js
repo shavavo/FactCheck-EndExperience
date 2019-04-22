@@ -158,13 +158,9 @@ var Session = {
     },
 
     playerFound: function() {
-        
         var liveBadge = document.querySelector('.ytp-live-badge');
         var style = getComputedStyle(liveBadge);
         var live = (style.display=="none") ? false:true;
-
-       
-
 
         if(live) this.initLiveRefresh();
 
@@ -195,8 +191,6 @@ var Session = {
         // Refresh every 5s
         this.liveInterval = setInterval(function() {
             chrome.runtime.sendMessage({greeting: {'id': youtube_id, 'last_update': this.last_update}}, function(response) {
-                console.log("Refreshed");
-
                 var data = response.data;
                 this.cards = this.cards.concat(data["cards"]);
                 this.last_update = data["timestamp"];
@@ -284,12 +278,6 @@ App.init();
 //        clearInterval(checkExist);
 //     }
 // }, 100);
-
-        
-
-// var liveBadge = document.querySelector('.ytp-live-badge');
-// var live = liveBadge && !liveBadge.getAttribute('disabled');
-// console.log(live);
 
 
 
