@@ -2,7 +2,7 @@ var example = {
     0: {
         "active": false,
         "quote": "\"We have unleashed a revolution in American Energy -- the United States is now the number one producer of oil and natural gas in the world.\"",
-        "explaination": "Production dipped in 2015 and 2016 as a result of overproduction and a collapse in oil prices, but recovered quickly once supply stabilized and prices increased, just as Trump was coming into office.",
+        "explanation": "Production dipped in 2015 and 2016 as a result of overproduction and a collapse in oil prices, but recovered quickly once supply stabilized and prices increased, just as Trump was coming into office.",
         "source": "Politifact",
         "time": 5,
         "conclusion": "Not the Full Story",
@@ -30,23 +30,29 @@ function process_results(data, callback) {
         // Begin accessing JSON data here
         var data = JSON.parse(this.response);
         var pos = data['pos'];
-
+        quoteToCard = {};
         cards = {};
         pos.forEach(element => {
-            // console.log(element);
+            //console.log(element);
+            next = 0;
             temp = {};
-            temp['active'] = false;
-            
-            temp['explaination'] = element['factcheck_details']['article_url'];
-            temp['source'] = element['factcheck_details']['organization_name'];
-            temp['conclusion'] = element['factcheck_details']['rating'];
-            temp['quote'] = element['text_details']['text'];
-            temp['time'] = element['text_details']['begins'];
-           
+            if (element['text_details']['text'] in quoteToCard) {
+                temp = quoteToCard[element['text_details']['text']];
+                next = Object.keys(temp).length;
+            }
+            temp[next] = {
+                'active': false,
+                'explanation': element['factcheck_details']['article_url'],
+                'source': element['factcheck_details']['organization_name'],
+                'conclusion': element['factcheck_details']['rating'],
+                'quote': element['text_details']['text'],
+                'time': element['text_details']['begins']
+            };
 
-            console.log(temp['time']);
-
-            cards[element['fid']] = temp;
+            if (next === 0) {
+                cards[element['fid']] = temp;
+                quoteToCard[element['text_details']['text']] = temp;
+            }
         })
 
         // console.log(cards);

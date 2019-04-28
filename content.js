@@ -38,15 +38,15 @@ function generateCardHTML(id, card) {
             <div class="bar">
                 <div id="progress-${id}" class="progress"></div>
             </div>
-            <h4 class="title">Fact Check from ${card["source"]}</h4>
+            <h4 class="title">Fact Check from ${card[0]["source"]}</h4>
             <p class="subtitle">We heard:</p>
-            <p class="quote">${card["quote"]}</p>
+            <p class="quote">${card[0]["quote"]}</p>
             <p class="subtitle">The facts say: </p>
-            <h2 class="conclusion">${card["conclusion"]}</h2>
+            <h2 class="conclusion">${card[0]["conclusion"]}</h2>
 
-            <button class="collapsible" id="collapsible-${id}">Explaination +</button>
+            <button class="collapsible" id="collapsible-${id}">Explanation +</button>
             <div class="content">
-                <p><a href="${card["explaination"]}" target="_blank">Link to Article</a></p>
+                <p><a href="${card[0]["explanation"]}" target="_blank">Link to Article</a></p>
             </div>
         </div>
     `)
@@ -77,7 +77,7 @@ var testCards = {
     0: {
         "active": false,
         "quote": "\"We have unleashed a revolution in American Energy -- the United States is now the number one producer of oil and natural gas in the world.\"",
-        "explaination": "Production dipped in 2015 and 2016 as a result of overproduction and a collapse in oil prices, but recovered quickly once supply stabilized and prices increased, just as Trump was coming into office.",
+        "explanation": "Production dipped in 2015 and 2016 as a result of overproduction and a collapse in oil prices, but recovered quickly once supply stabilized and prices increased, just as Trump was coming into office.",
         "source": "Politifact",
         "time": 5,
         "conclusion": "Not the Full Story",
@@ -85,7 +85,7 @@ var testCards = {
     1: {
         "active": false,
         "quote": "\"AAAAAA\"",
-        "explaination": "Production dipped in 2015 and 2016 as a result of overproduction and a collapse in oil prices, but recovered quickly once supply stabilized and prices increased, just as Trump was coming into office.",
+        "explanation": "Production dipped in 2015 and 2016 as a result of overproduction and a collapse in oil prices, but recovered quickly once supply stabilized and prices increased, just as Trump was coming into office.",
         "source": "Politifact",
         "time": 6,
         "conclusion": "Not the Full Story",
@@ -93,7 +93,7 @@ var testCards = {
     3: {
         "active": false,
         "quote": "\"asdf ashed a revolution in American Energy -- the United States is now the number one producer of oil and natural gas in the world.\"",
-        "explaination": "Production dipped in 2015 and 2016 as a result of overproduction and a collapse in oil prices, but recovered quickly once supply stabilized and prices increased, just as Trump was coming into office.",
+        "explanation": "Production dipped in 2015 and 2016 as a result of overproduction and a collapse in oil prices, but recovered quickly once supply stabilized and prices increased, just as Trump was coming into office.",
         "source": "Politifact",
         "time": 7,
         "conclusion": "Not the Full Story",
@@ -101,7 +101,7 @@ var testCards = {
     4: {
         "active": false,
         "quote": "\"asdf ashed a revolution in American Energy -- the United States is now the number one producer of oil and natural gas in the world.\"",
-        "explaination": "Production dipped in 2015 and 2016 as a result of overproduction and a collapse in oil prices, but recovered quickly once supply stabilized and prices increased, just as Trump was coming into office.",
+        "explanation": "Production dipped in 2015 and 2016 as a result of overproduction and a collapse in oil prices, but recovered quickly once supply stabilized and prices increased, just as Trump was coming into office.",
         "source": "Politifact",
         "time": 8,
         "conclusion": "Not the Full Story",
@@ -109,7 +109,7 @@ var testCards = {
     5: {
         "active": false,
         "quote": "\"asdf ashed a revolution in American Energy -- the United States is now the number one producer of oil and natural gas in the world.\"",
-        "explaination": "Production dipped in 2015 and 2016 as a result of overproduction and a collapse in oil prices, but recovered quickly once supply stabilized and prices increased, just as Trump was coming into office.",
+        "explanation": "Production dipped in 2015 and 2016 as a result of overproduction and a collapse in oil prices, but recovered quickly once supply stabilized and prices increased, just as Trump was coming into office.",
         "source": "Politifact",
         "time": 17,
         "conclusion": "Not the Full Story",
@@ -142,6 +142,7 @@ var App = {
         // This is required because we cannot make requests to http within youtube's https
         chrome.runtime.sendMessage({greeting: youtube_id}, function(response) {
             this.newSession(response.data);
+            console.log("object: %O", response.data);
         }.bind(this));
     },
 
@@ -244,8 +245,8 @@ var Session = {
         for(var id in this.cards) {
             var card = this.cards[id]
 
-            if(card["active"]==false 
-                && card["time"]<=this.player.currentTime && this.player.currentTime<=card["time"]+5) {
+            if(card[0]["active"]==false
+                && card[0]["time"]<=this.player.currentTime && this.player.currentTime<=card[0]["time"]+5) {
 
                 var p = generateCardHTML(id, card);
                 components.cardContainer.insertBefore(p, components.placeholder);
