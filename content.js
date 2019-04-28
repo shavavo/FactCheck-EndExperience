@@ -10,7 +10,7 @@ function generateCardHTML(id, card) {
     var facts = ``
     for (var i in card['conclusion']) {
         facts += `
-            <a href="${card["explaination"][i]}" target="_blank">
+            <a href="${card["explanation"][i]}" target="_blank">
                 <div class="conclusion__container">
                     <u><p class="conclusion__source">(${card["source"][i]})</p></u>
                     <h2 class="conclusion">${card["conclusion"][i]}</h2>
@@ -219,8 +219,8 @@ var Session = {
         for(var id in this.cards) {
             var card = this.cards[id]
 
-            if(card[0]["active"]==false
-                && card[0]["time"]<=this.player.currentTime && this.player.currentTime<=card[0]["time"]+5) {
+            if(card["active"]==false
+                && card["time"]<=this.player.currentTime && this.player.currentTime<=card["time"]+5) {
 
                 var p = generateCardHTML(id, card);
                 components.cardContainer.insertBefore(p, components.placeholder);

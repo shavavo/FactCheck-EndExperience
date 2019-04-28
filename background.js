@@ -38,7 +38,6 @@ function process_results(data, last_update, callback) {
         // Begin accessing JSON data here
         var data = JSON.parse(this.response);
         var pos = data['pos'];
-        quoteToCard = {};
         cards = {};
         pos.forEach(element => {
 
@@ -49,7 +48,7 @@ function process_results(data, last_update, callback) {
                 temp = cards[key];
             else {
                 temp = {}
-                temp['explaination'] = [];
+                temp['explanation'] = [];
                 temp['source'] = [];
                 temp['conclusion'] = [];
             }
@@ -57,7 +56,7 @@ function process_results(data, last_update, callback) {
 
             temp['active'] = false;
             
-            temp['explaination'].push(element['factcheck_details']['article_url']) ;
+            temp['explanation'].push(element['factcheck_details']['article_url']) ;
             temp['source'].push(element['factcheck_details']['organization_name']);
             temp['conclusion'].push(element['factcheck_details']['rating']);
 
