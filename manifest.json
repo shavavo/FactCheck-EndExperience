@@ -8,7 +8,8 @@
     "content_scripts": [{
       "css": ["styles.css"],
       "js": ["content.js"],
-      "matches": ["https://www.youtube.com/*"]
+      "matches": ["https://www.youtube.com/*"],
+      "run_at": "document_start"
     }],
 
     "background": {
