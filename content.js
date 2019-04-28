@@ -1,9 +1,9 @@
 function createElementFromHTML(htmlString) {
     var div = document.createElement('div');
     div.innerHTML = htmlString.trim();
-  
+
     // Change this to div.childNodes to support multiple top-level nodes
-    return div.firstChild; 
+    return div.firstChild;
 }
 
 function generateCardHTML(id, card) {
@@ -24,10 +24,21 @@ function generateCardHTML(id, card) {
             <div class="bar">
                 <div id="progress-${id}" class="progress"></div>
             </div>
-            <p class="subtitle">We heard:</p>
+            <p class="subtitle">At ${new Date(card["time"] * 1000).toISOString().substr(11, 8)}, we heard:</p>
             <p class="quote">${card["quote"]}</p>
             <p class="subtitle">Related fact checks indicate: </p>
             ${facts}
+        </div>
+    `)
+}
+
+function generateEmptyCardHTML(id) {
+    return createElementFromHTML(`
+        <div class="factcheck__overlay-check fadeIn">
+            <div class="bar">
+                <div id="progress-${id}" class="progress"></div>
+            </div>
+            <p class="subtitle">No previous fact-checks.</p>
         </div>
     `)
 }
@@ -47,23 +58,23 @@ function fadeOut(node, callback) {
             clearInterval(id);
             callback(node);
         } else {
-            opacity-=0.05; 
-            node.style.opacity = opacity + ''; 
+            opacity-=0.05;
+            node.style.opacity = opacity + '';
         }
     }
 }
 
 var App = {
     currentSession: null,
- 
+
     init: function() {
         this.bindPathChange();
     },
 
     bindPathChange: function() {
         setTimeout(5000);
-        window.addEventListener("spfdone", this.newPath.bind(this, null)); // new youtube design    
-        window.addEventListener("yt-navigate-finish", this.newPath.bind(this, null)); // new youtube design    
+        window.addEventListener("spfdone", this.newPath.bind(this, null)); // new youtube design
+        window.addEventListener("yt-navigate-finish", this.newPath.bind(this, null)); // new youtube design
     },
 
     newPath: function(callback) {
@@ -91,7 +102,7 @@ var App = {
 
         if(data)
             this.currentSession = Session.init(data["cards"], data["timestamp"]);
-        else 
+        else
             this.currentSession = null;
     }
 }
@@ -100,7 +111,7 @@ var Session = {
     init: function(data, timestamp) {
         this.cards = data;
         this.last_update = timestamp;
-        
+
         this.initUIComponents();
         this.checkPlayerExists();
 
@@ -118,6 +129,7 @@ var Session = {
 
     initUIComponents: function() {
         this.components =  {
+            emptyHistoryCard: createElementFromHTML('<div/>'),
             cardContainer: createElementFromHTML(`<div class="factcheck__overlay" />`),
             hiddenCards: createElementFromHTML(`<div/>`),
             placeholder: createElementFromHTML(`<div class="placeholder" />`),
@@ -167,14 +179,14 @@ var Session = {
 
         var defaultPlayer = document.getElementById('ytd-player');
         this.player = document.querySelector('video');
-        
+
         components = this.components;
         defaultPlayer.children[0].children[0].appendChild(components.cardContainer);
         defaultPlayer.children[0].children[0].appendChild(components.openHistoryButton);
         defaultPlayer.children[0].children[0].appendChild(components.sidebar);
-        
+
         components.openHistoryButton.addEventListener('click', function(){
-            components.sidebar.style.width ='20%';
+            components.sidebar.style.width ='25%';
             components.openHistoryButton.style.opacity = '0';
         });
         document.getElementById("closeHistory").addEventListener('click', function() {
@@ -202,11 +214,13 @@ var Session = {
         for (var id in this.cards) {
             var card = this.cards[id]
             if(card["time"] < this.player.currentTime) {
-                var p = generateCardHTML(id, card);
+                console.log(1);
+                var p = generateEmptyCardHTML(id);
                 this.cards[id]["node"] = p;
                 var history = this.components.historyContainer;
                 history.insertBefore(p, history.firstChild);
 
+                var elem = document.getElementById("progress-" + id);
                 var elem = document.getElementById("progress-" + id);
                 elem.style.width = "100%";
             }
@@ -215,7 +229,7 @@ var Session = {
 
     onTimeUpdate: function() {
         var components = this.components;
-        
+
         for(var id in this.cards) {
             var card = this.cards[id]
 
@@ -236,29 +250,29 @@ var Session = {
     move: function(card_id) {
         components = this.components;
 
-        var elem = document.getElementById("progress-" + card_id); 
+        var elem = document.getElementById("progress-" + card_id);
         var width = 1;
         var id = setInterval(frame.bind(this), 10);
 
         function frame() {
           if (width >= 100) {
             clearInterval(id);
-            
+
             var node = this.cards[card_id]['node'];
 
             if (!node)
                 return;
-          
+
             fadeOut(node, function(node) {
                 this.components.historyContainer.appendChild(node);
                 node.style.opacity = '1';
             }.bind(this));
           } else {
-            width += .05; 
-            elem.style.width = width + '%'; 
+            width += .05;
+            elem.style.width = width + '%';
           }
         };
-    
+
         return id;
     }
 }
